@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AVL Tree Visualization and Balancing System | AI2203</title>
+  <meta name="description" content="Interactive educational web application for animated, step-by-step AVL tree visualization, balance factor calculation, and 4 rotation cases.">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Google Fonts for clean academic presentation -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ========================================================================
+       APPLICATION HEADER
+       ======================================================================== -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <div class="brand-icon">🌲</div>
+        <div class="brand-text">
+          <h1>AVL Tree Visualization and Balancing System</h1>
+          <div class="brand-subtitle">
+            <span class="badge-academic">AI2203</span>
+            <span>Data Structures and Algorithms Laboratory • Interactive Learning Engine</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="app-nav">
+        <button class="nav-tab-btn active" data-tab="tab-visualizer">
+          <span>🌲</span> Visualizer
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-benchmark">
+          <span>⚖️</span> BST vs AVL Comparison
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-applications">
+          <span>🌍</span> Real-World Applications
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-theory">
+          <span>📐</span> Theory & Complexity
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-report">
+          <span>📋</span> Project Report & Viva
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN APPLICATION CONTENT
+       ======================================================================== -->
+  <main class="app-main">
+
+    <!-- ======================================================================
+         TAB 1: AVL TREE VISUALIZER (CORE REQUIREMENT)
+         ====================================================================== -->
+    <div id="tab-visualizer" class="tab-pane active">
+      <div class="visualizer-grid">
+
+        <!-- ------------------------------------------------------------------
+             LEFT COLUMN: CONTROLS, INPUT & PRESETS
+             ------------------------------------------------------------------ -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h2><span>⚙️</span> Tree Operations</h2>
+          </div>
+          <div class="panel-body">
+
+            <!-- Sequence Input Section -->
+            <div class="control-section">
+              <label for="sequenceInput" class="section-label">Input Sequence (Integers)</label>
+              <div class="input-group">
+                <input 
+                  type="text" 
+                  id="sequenceInput" 
+                  class="text-input" 
+                  placeholder="e.g. 30, 20, 10, 25, 28" 
+                  value="30, 20, 10, 25, 28"
+                  autocomplete="off"
+                >
+                <div class="input-hint">Comma-separated integers. Unique keys only.</div>
+                <button id="btnVisualize" class="btn btn-primary btn-block">
+                  <span>▶</span> Insert / Visualize
+                </button>
+                <div class="btn-row">
+                  <button id="btnInsertSingle" class="btn btn-secondary btn-block btn-sm" title="Insert a single element">
+                    + Insert Node
+                  </button>
+                  <button id="btnDeleteSingle" class="btn btn-secondary btn-block btn-sm" title="Delete a single element">
+                    - Delete Node
+                  </button>
+                </div>
+                <div class="btn-row">
+                  <button id="btnRandom" class="btn btn-secondary btn-block btn-sm">
+                    🎲 Random
+                  </button>
+                  <button id="btnReset" class="btn btn-danger btn-block btn-sm">
+                    🔄 Reset Tree
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preset Examples Section -->
+            <div class="control-section">
+              <span class="section-label">Rotation Presets</span>
+              <div class="preset-grid">
+                <button class="preset-btn" data-sequence="30, 20, 10">
+                  <div class="preset-title">1. LL Case <span>↷</span></div>
+                  <div class="preset-seq">30, 20, 10</div>
+                </button>
+                <button class="preset-btn" data-sequence="10, 20, 30">
+                  <div class="preset-title">2. RR Case <span>↶</span></div>
+                  <div class="preset-seq">10, 20, 30</div>
+                </button>
+                <button class="preset-btn" data-sequence="30, 10, 20">
+                  <div class="preset-title">3. LR Case <span>⇄</span></div>
+                  <div class="preset-seq">30, 10, 20</div>
+                </button>
+                <button class="preset-btn" data-sequence="10, 30, 20">
+                  <div class="preset-title">4. RL Case <span>⇅</span></div>
+                  <div class="preset-seq">10, 30, 20</div>
+                </button>
+              </div>
+              <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                <button class="preset-btn" data-sequence="30, 20, 10, 25, 28" style="width: 100%;">
+                  <div class="preset-title">5. Prompt Demo Sequence</div>
+                  <div class="preset-seq">30, 20, 10, 25, 28</div>
+                </button>
+                <button class="preset-btn" data-sequence="50, 25, 10, 5, 20, 75, 80, 85, 30, 28" style="width: 100%;">
+                  <div class="preset-title">6. Multiple Balancing Operations</div>
+                  <div class="preset-seq">10 nodes with multiple rebalancings</div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Animation Playback Controls -->
+            <div class="control-section">
+              <span class="section-label">Animation Controls</span>
+              <div class="playback-controls">
+                <div class="playback-btn-group">
+                  <button id="btnPrev" class="btn btn-secondary btn-sm" title="Previous Step">⏮ Prev</button>
+                  <button id="btnPlayPause" class="btn btn-primary btn-sm play-pause-btn" title="Play or Pause">▶ Play</button>
+                  <button id="btnNext" class="btn btn-secondary btn-sm" title="Next Step">Next ⏭</button>
+                  <button id="btnJumpEnd" class="btn btn-secondary btn-sm" title="Jump to Final Tree">⏭ End</button>
+                </div>
+
+                <div class="timeline-progress-wrapper">
+                  <input type="range" id="timelineSlider" class="timeline-slider" min="0" max="0" value="0" disabled>
+                  <span id="stepCounter" class="step-counter-text">Step 0 of 0</span>
+                </div>
+
+                <div class="speed-control-box">
+                  <span>Speed:</span>
+                  <input type="range" id="speedSlider" class="speed-slider" min="200" max="2000" step="100" value="900">
+                  <span id="speedLabel" style="font-family: var(--font-mono); font-size: 0.72rem;">0.9s/step</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ------------------------------------------------------------------
+             CENTER COLUMN: AVL TREE CANVAS (SVG)
+             ------------------------------------------------------------------ -->
+        <div class="panel-card canvas-panel">
+          <div class="canvas-toolbar">
+            <div class="canvas-status-tag">
+              <span id="canvasStatusText">Status: Ready</span>
+            </div>
+            <div class="canvas-actions">
+              <button id="btnZoomIn" class="btn btn-secondary btn-sm" title="Zoom In">🔍 +</button>
+              <button id="btnZoomOut" class="btn btn-secondary btn-sm" title="Zoom Out">🔍 -</button>
+              <button id="btnFitView" class="btn btn-secondary btn-sm" title="Reset View / Fit to Canvas">⛶ Fit View</button>
+              <button id="btnExportSnapshot" class="btn btn-primary btn-sm" title="Capture high-resolution PNG for Report">📸 Snapshot</button>
+            </div>
+          </div>
+
+          <div class="canvas-viewport-container">
+            <svg id="treeSvg" class="tree-svg"></svg>
+
+            <!-- Visual Legend Overlay -->
+            <div class="canvas-legend">
+              <div class="legend-item"><span class="legend-dot dot-normal"></span> Balanced (|BF| ≤ 1)</div>
+              <div class="legend-item"><span class="legend-dot dot-check"></span> Active / Checking</div>
+              <div class="legend-item"><span class="legend-dot dot-insert"></span> Newly Inserted</div>
+              <div class="legend-item"><span class="legend-dot dot-imbalance"></span> ⚠️ Imbalanced (|BF| ≥ 2)</div>
+              <div class="legend-item"><span class="legend-dot dot-rotate"></span> Rotation Pivot</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------------------------------------------------------
+             RIGHT COLUMN: LIVE STEP EXPLANATION & BALANCE FACTOR FORMULA
+             ------------------------------------------------------------------ -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h2><span>📋</span> Step Explanation</h2>
+          </div>
+          <div class="panel-body">
+
+            <!-- Step Overview Card -->
+            <div class="step-card">
+              <div class="step-card-header">
+                <span id="stepPhaseBadge" class="step-badge badge-insert">INIT</span>
+              </div>
+              <h3 id="stepTitle" class="step-title">Welcome to AVL Visualizer</h3>
+              <p id="stepDesc" class="step-desc">
+                Enter an integer sequence and click "Insert / Visualize" to see every comparison, placement, height calculation, balance check, and rotation.
+              </p>
+            </div>
+
+            <!-- Dynamic Rotation Alert Banner -->
+            <div id="rotationAlertCard" class="rotation-alert-card">
+              <div class="rotation-alert-title">
+                <span>⚠️</span>
+                <span>Rotation Action Required</span>
+              </div>
+              <span id="rotationCaseTag" class="rotation-case-tag">LL Case</span>
+              <div id="rotationAlertText" class="rotation-steps-list">
+                Right Rotation required on pivot node.
+              </div>
+            </div>
+
+            <!-- Live Balance Factor Formula Card -->
+            <div id="bfFormulaCard" class="bf-formula-card">
+              <div class="formula-header">
+                <span>BALANCE FACTOR FORMULA</span>
+                <span>h(L) - h(R)</span>
+              </div>
+              <div id="formulaDisplay" class="formula-display">
+                BF = Height(Left) - Height(Right)
+              </div>
+              <div class="formula-rules-grid">
+                <div class="formula-rule-pill"><span class="rule-balanced">BF = -1</span> <span>Balanced (Right-heavy)</span></div>
+                <div class="formula-rule-pill"><span class="rule-balanced">BF = 0</span> <span>Balanced (Equal)</span></div>
+                <div class="formula-rule-pill"><span class="rule-balanced">BF = +1</span> <span>Balanced (Left-heavy)</span></div>
+                <div class="formula-rule-pill"><span class="rule-imbalanced">BF ≥ +2</span> <span>⚠️ Left Imbalance</span></div>
+                <div class="formula-rule-pill" style="grid-column: span 2;"><span class="rule-imbalanced">BF ≤ -2</span> <span>⚠️ Right Imbalance</span></div>
+              </div>
+            </div>
+
+            <!-- Execution Step Log -->
+            <div class="history-section">
+              <div class="history-header">
+                <span>Execution Steps History</span>
+                <span style="font-size: 0.72rem; color: var(--slate-400);">Click step to jump</span>
+              </div>
+              <ul id="historyList" class="history-list">
+                <!-- Dynamically populated -->
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         TAB 2: BST VS AVL SKEW COMPARISON
+         ====================================================================== -->
+    <div id="tab-benchmark" class="tab-pane">
+      <div class="comparison-wrapper">
+        <div class="comparison-header">
+          <h2>⚖️ Normal Binary Search Tree vs AVL Tree Comparison</h2>
+          <p>
+            Demonstrating why balanced trees are vital in computer science: inserting sorted or nearly-sorted data transforms an ordinary BST into a degenerate, $O(N)$ singly-linked list, whereas the AVL Tree continuously balances itself to guarantee $O(\log N)$ search time.
+          </p>
+        </div>
+
+        <div class="comparison-controls">
+          <div style="flex: 1; min-width: 280px;">
+            <label class="section-label" for="bstSeqInput">Input Sequence for Comparison</label>
+            <input type="text" id="bstSeqInput" class="text-input" value="10, 20, 30, 40, 50, 60, 70">
+            <span class="input-hint">Ascending sorted sequence produces maximum skew in normal BST</span>
+          </div>
+          <button id="btnRunComparison" class="btn btn-primary" style="height: 42px;">
+            ⚡ Run Side-by-Side Comparison
+          </button>
+        </div>
+
+        <div class="trees-side-by-side">
+          <!-- Unbalanced BST Box -->
+          <div class="tree-compare-box">
+            <div class="tree-compare-header">
+              <div class="tree-compare-title" style="color: #dc2626;">Standard Unbalanced BST</div>
+              <span class="stat-chip skewed">Degenerate / Skewed</span>
+            </div>
+            <div class="tree-stats-row">
+              <div class="stat-chip">Tree Height: <strong id="bstHeightVal">7</strong></div>
+              <div class="stat-chip">Worst Search Depth: <strong id="bstDepthVal">7</strong></div>
+              <div class="stat-chip skewed">Time Complexity: O(N)</div>
+            </div>
+            <div class="mini-svg-container">
+              <svg id="bstSvg" style="width: 100%; height: 320px;"></svg>
+            </div>
+          </div>
+
+          <!-- Balanced AVL Tree Box -->
+          <div class="tree-compare-box">
+            <div class="tree-compare-header">
+              <div class="tree-compare-title" style="color: #059669;">Self-Balancing AVL Tree</div>
+              <span class="stat-chip balanced">Height Balanced</span>
+            </div>
+            <div class="tree-stats-row">
+              <div class="stat-chip">Tree Height: <strong id="avlHeightVal">3</strong></div>
+              <div class="stat-chip">Worst Search Depth: <strong id="avlDepthVal">3</strong></div>
+              <div class="stat-chip balanced">Time Complexity: O(log N)</div>
+            </div>
+            <div class="mini-svg-container">
+              <svg id="avlSvgMini" style="width: 100%; height: 320px;"></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Search Depth Benchmark -->
+        <div class="search-benchmark-card">
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--dark); margin-bottom: 0.5rem;">
+            🔍 Interactive Search Performance Benchmark
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--slate-600); margin-bottom: 0.85rem;">
+            Enter an element to search. The tool will trace the exact search path in both trees and count the number of node comparisons required to locate it.
+          </p>
+          <div style="display: flex; gap: 0.75rem; align-items: center; max-width: 480px;">
+            <input type="number" id="searchTargetInput" class="text-input" placeholder="Enter key (e.g. 70)" value="70">
+            <button id="btnCompareSearch" class="btn btn-secondary" style="white-space: nowrap;">
+              Compare Search Cost
+            </button>
+          </div>
+          <div class="benchmark-result-grid">
+            <div style="background: var(--white); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--slate-200);">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #dc2626;">BST COMPARISONS</div>
+              <div id="bstSearchSteps" style="font-family: var(--font-mono); font-size: 0.95rem; margin-top: 0.25rem;">
+                7 comparisons (Path: 10 → 20 → 30 → 40 → 50 → 60 → 70)
+              </div>
+            </div>
+            <div style="background: var(--white); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--slate-200);">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #059669;">AVL TREE COMPARISONS</div>
+              <div id="avlSearchSteps" style="font-family: var(--font-mono); font-size: 0.95rem; margin-top: 0.25rem;">
+                3 comparisons (Path: 40 → 60 → 70)
+              </div>
+            </div>
+          </div>
+          <div id="searchVerdict" style="margin-top: 0.85rem; font-size: 0.88rem; color: var(--slate-700);">
+            <span style="color:#059669; font-weight:700;">AVL Tree was 57% faster!</span> Required only 3 comparisons vs 7 in the skewed BST.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         TAB 3: REAL-WORLD APPLICATIONS
+         ====================================================================== -->
+    <div id="tab-applications" class="tab-pane">
+      <div class="content-page-card">
+        <div class="page-header">
+          <h2>🌍 Real-World Applications of Balanced Trees</h2>
+          <p>
+            Understanding where AVL trees and balanced search-tree principles power modern computing infrastructure and high-performance algorithms.
+          </p>
+        </div>
+
+        <div class="applications-grid">
+          <!-- Card 1 -->
+          <div class="app-card">
+            <div class="app-card-icon">🗄️</div>
+            <h3>In-Memory Database Indexing Concepts</h3>
+            <p>
+              In memory-resident relational engines and key-value stores, balanced trees maintain sorted indexes without costly disk page transfers. Because in-memory trees are strictly CPU bound, the strict balance factor of AVL trees minimizes comparison counts during frequent point lookups and range scans.
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="app-card">
+            <div class="app-card-icon">⏱️</div>
+            <h3>Dynamic Ordered Data & Kernel Schedulers</h3>
+            <p>
+              Operating systems require strict worst-case $O(\log n)$ guarantees for thread priority management, sleep timers, and process dispatching. Concepts pioneered by AVL trees provide predictable latencies, preventing CPU starvation from pathological input orderings.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="app-card">
+            <div class="app-card-icon">🌐</div>
+            <h3>Network Routing & Longest Prefix Matching</h3>
+            <p>
+              Core network routers process incoming IP packets at multi-gigabit line speeds. Trie structures and balanced search trees index IP prefix ranges, allowing routers to resolve the next-hop interface with guaranteed logarithmic lookups.
+            </p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="app-card">
+            <div class="app-card-icon">🧠</div>
+            <h3>Dynamic Memory Allocators (Heap Management)</h3>
+            <p>
+              Modern C/C++ runtime memory managers (such as dlmalloc and jemalloc variants) track free memory chunks categorized by byte size using balanced binary search trees. This enables instantaneous best-fit free block searching and immediate coalescing upon deallocation.
+            </p>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="app-card">
+            <div class="app-card-icon">📈</div>
+            <h3>High-Frequency Trading & Order Book Engines</h3>
+            <p>
+              Financial matching engines maintain live limit order books with thousands of price levels. Because search and price level cancellation requests occur at microsecond latencies, balanced trees allow rapid price level traversal and continuous updates under heavy load.
+            </p>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="app-card">
+            <div class="app-card-icon">📐</div>
+            <h3>Computational Geometry & Spatial Range Searches</h3>
+            <p>
+              Interval trees, segment trees, and range query structures rely on balanced tree backbones to perform window queries, polygon intersection testing, and collision detection in simulation engines and CAD software.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout-box" style="margin-top: 1.75rem;">
+          <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
+            📌 Engineering Insight: When to choose AVL Trees vs Red-Black Trees vs B-Trees
+          </h4>
+          <p style="font-size: 0.85rem; color: var(--slate-700); line-height: 1.6;">
+            <strong>AVL Trees</strong> are more rigidly balanced than Red-Black trees (maximum height $\approx 1.44 \log_2 n$ for AVL vs $2 \log_2 n$ for Red-Black). Therefore, AVL trees offer faster search times and are superior when lookups vastly outnumber insertions and deletions. In contrast, <strong>B-Trees</strong> are optimized for block storage/databases where disk I/O dominates, and <strong>Red-Black Trees</strong> are preferred when insertions and deletions are extremely frequent.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         TAB 4: THEORY, COMPLEXITY & ROTATIONS
+         ====================================================================== -->
+    <div id="tab-theory" class="tab-pane">
+      <div class="content-page-card">
+        <div class="page-header">
+          <h2>📐 Mathematical Foundations & AVL Theory</h2>
+          <p>
+            Comprehensive academic breakdown of balance factors, height bounds, rotation proofs, and asymptotic complexities.
+          </p>
+        </div>
+
+        <!-- Definition Section -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 0.5rem;">1. Binary Search Tree (BST)</h3>
+            <p style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.6;">
+              A Binary Search Tree is a binary tree in which every node $x$ satisfies the BST property: for every key $y$ in the left subtree of $x$, $y < x$; and for every key $z$ in the right subtree of $x$, $z > x$. In an unmanaged BST, inserting sorted data leads to a degenerate chain with worst-case height $h = n$.
+            </p>
+          </div>
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 0.5rem;">2. AVL Tree (Adelson-Velsky & Landis, 1962)</h3>
+            <p style="font-size: 0.88rem; color: var(--slate-600); line-height: 1.6;">
+              An AVL tree is a self-balancing binary search tree where the heights of the two child subtrees of any node differ by at most one:
+              <br>
+              <code>Balance Factor = Height(Left) - Height(Right) ∈ {-1, 0, +1}</code>.
+              Whenever an update causes $|\text{BF}| \ge 2$, local tree rotations immediately restore balance in $O(1)$ time.
+            </p>
+          </div>
+        </div>
+
+        <!-- Complexity Table -->
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 0.5rem;">Asymptotic Time & Space Complexity</h3>
+        <div class="complexity-table-wrapper">
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th>Operation</th>
+                <th>Standard BST (Average)</th>
+                <th>Standard BST (Worst-Case)</th>
+                <th>AVL Tree (Worst-Case Guaranteed)</th>
+                <th>Mechanics / Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Search (Lookup)</strong></td>
+                <td><span class="complexity-tag tag-fast">O(log n)</span></td>
+                <td><span class="complexity-tag tag-linear">O(n)</span></td>
+                <td><span class="complexity-tag tag-fast">O(log n)</span></td>
+                <td>Guaranteed by maximum height bound $h < 1.44 \log_2(n+2)$.</td>
+              </tr>
+              <tr>
+                <td><strong>Insertion</strong></td>
+                <td><span class="complexity-tag tag-fast">O(log n)</span></td>
+                <td><span class="complexity-tag tag-linear">O(n)</span></td>
+                <td><span class="complexity-tag tag-fast">O(log n)</span></td>
+                <td>$O(\log n)$ traversal + $O(1)$ rotation to rebalance lowest ancestor.</td>
+              </tr>
+              <tr>
+                <td><strong>Deletion</strong></td>
+                <td><span class="complexity-tag tag-fast">O(log n)</span></td>
+                <td><span class="complexity-tag tag-linear">O(n)</span></td>
+                <td><span class="complexity-tag tag-fast">O(log n)</span></td>
+                <td>$O(\log n)$ search + up to $O(\log n)$ rotations during ancestor backtrack.</td>
+              </tr>
+              <tr>
+                <td><strong>Single Rotation</strong></td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td><span class="complexity-tag tag-fast">O(1)</span></td>
+                <td>Constant number of pointer reassignments (3 pointers updated).</td>
+              </tr>
+              <tr>
+                <td><strong>Auxiliary Space</strong></td>
+                <td><span class="complexity-tag tag-fast">O(n)</span></td>
+                <td><span class="complexity-tag tag-fast">O(n)</span></td>
+                <td><span class="complexity-tag tag-fast">O(n)</span></td>
+                <td>Stores key, left/right pointers, and 1 byte for node height.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 4 Rotation Cases Matrix -->
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-top: 1.5rem; margin-bottom: 0.5rem;">
+          The Four AVL Rotation Cases
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--slate-600);">
+          Imbalances occur when a node has $|\text{BF}| = 2$. Depending on the relationship between the imbalanced node and the child where the insert occurred, exactly one of the four rotation procedures is applied:
+        </p>
+
+        <div class="rotation-matrix-grid">
+          <!-- LL -->
+          <div class="rot-card">
+            <h4>1. Left-Left (LL) Case</h4>
+            <p style="font-size: 0.82rem; color: var(--slate-600);">
+              <strong>Condition:</strong> Node $z$ has $\text{BF} = +2$ and left child has $\text{BF} \ge 0$.
+              <br><strong>Solution:</strong> Single <strong>RIGHT Rotation</strong> on node $z$.
+            </p>
+            <div class="rot-code-block">    z              y
+   /              / \
+  y      -->     x   z
+ /
+x</div>
+          </div>
+
+          <!-- RR -->
+          <div class="rot-card">
+            <h4>2. Right-Right (RR) Case</h4>
+            <p style="font-size: 0.82rem; color: var(--slate-600);">
+              <strong>Condition:</strong> Node $z$ has $\text{BF} = -2$ and right child has $\text{BF} \le 0$.
+              <br><strong>Solution:</strong> Single <strong>LEFT Rotation</strong> on node $z$.
+            </p>
+            <div class="rot-code-block">z                  y
+ \                / \
+  y      -->     z   x
+   \
+    x</div>
+          </div>
+
+          <!-- LR -->
+          <div class="rot-card">
+            <h4>3. Left-Right (LR) Case</h4>
+            <p style="font-size: 0.82rem; color: var(--slate-600);">
+              <strong>Condition:</strong> Node $z$ has $\text{BF} = +2$ and left child has $\text{BF} = -1$.
+              <br><strong>Solution:</strong> Double Rotation:
+              <br>• Step 1: Left Rotate child $y$
+              <br>• Step 2: Right Rotate root $z$
+            </p>
+            <div class="rot-code-block">  z          z          x
+ /          /          / \
+y    -->   x    -->   y   z
+ \        /
+  x      y</div>
+          </div>
+
+          <!-- RL -->
+          <div class="rot-card">
+            <h4>4. Right-Left (RL) Case</h4>
+            <p style="font-size: 0.82rem; color: var(--slate-600);">
+              <strong>Condition:</strong> Node $z$ has $\text{BF} = -2$ and right child has $\text{BF} = +1$.
+              <br><strong>Solution:</strong> Double Rotation:
+              <br>• Step 1: Right Rotate child $y$
+              <br>• Step 2: Left Rotate root $z$
+            </p>
+            <div class="rot-code-block">z          z            x
+ \          \          / \
+  y   -->    x  -->   z   y
+ /            \
+x              y</div>
+          </div>
+        </div>
+
+        <!-- Height Bound Mathematical Proof -->
+        <div class="callout-box" style="margin-top: 1.75rem;">
+          <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">
+            📐 Mathematical Proof of AVL Tree Logarithmic Height Bound
+          </h4>
+          <p style="font-size: 0.85rem; color: var(--slate-700); line-height: 1.6;">
+            Let $N(h)$ be the minimum number of nodes in an AVL tree of height $h$.
+            <br>
+            For $h = 0$, $N(0) = 0$ (empty tree). For $h = 1$, $N(1) = 1$ (single node). For $h = 2$, $N(2) = 2$.
+            <br>
+            To minimize nodes for height $h$, one child must have height $h-1$ and the other must have height $h-2$.
+            <br>
+            Hence, $N(h) = 1 + N(h-1) + N(h-2)$.
+            <br>
+            This recurrence is identical to the Fibonacci numbers: $N(h) = F_{h+2} - 1$.
+            <br>
+            Using Binet's formula with the golden ratio $\phi = \frac{1 + \sqrt{5}}{2} \approx 1.618$:
+            <br>
+            $N(h) > \frac{\phi^h}{\sqrt{5}} - 1 \implies h < \frac{\log_2(N + 1) + \frac{1}{2} \log_2 5}{\log_2 \phi} \approx 1.4404 \log_2(N + 2)$.
+            <br>
+            Therefore, the height of an AVL tree with $n$ nodes is strictly bounded by $O(\log n)$, guaranteeing worst-case $O(\log n)$ search, insert, and delete operations.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         TAB 5: COLLEGE MINI PROJECT REPORT (AI2203 LAB)
+         ====================================================================== -->
+    <div id="tab-report" class="tab-pane">
+      <div class="content-page-card">
+        <div class="page-header">
+          <h2>📋 AI2203 – Data Structures and Algorithms Laboratory</h2>
+          <p>
+            Academic Mini-Project Report & Comprehensive Viva Voce Examination Guide
+          </p>
+        </div>
+
+        <article class="report-article">
+
+          <!-- Section 1 -->
+          <section class="report-section">
+            <h3>1. Introduction</h3>
+            <p>
+              The <strong>AVL Tree Visualization and Balancing System</strong> is an interactive educational software tool designed to facilitate intuitive understanding of self-balancing binary search trees. Named after Soviet mathematicians Georgy Adelson-Velsky and Evgenii Landis, who introduced the structure in 1962, the AVL Tree was the first dynamically balanced search tree in computer science. The application bridges the gap between abstract mathematical recurrences and practical visualization by exposing every intermediate micro-step during node insertion, comparison, height computation, balance factor diagnosis, and tree restructuring.
+            </p>
+          </section>
+
+          <!-- Section 2 -->
+          <section class="report-section">
+            <h3>2. Problem Statement</h3>
+            <p>
+              Standard Binary Search Trees (BST) provide $O(\log n)$ average-case performance. However, when elements are inserted in sorted or semi-sorted order, a standard BST degenerates into an $O(n)$ linear linked list, catastrophic for real-time systems. Students frequently struggle with the multi-step mechanics of tree rotations, balance factor signs, and double rotation sequences (LR and RL). Most existing tools jump directly from the input sequence to the final balanced tree, depriving learners of the cognitive bridge between node insertion and local rotation re-wiring.
+            </p>
+          </section>
+
+          <!-- Section 3 -->
+          <section class="report-section">
+            <h3>3. Project Objectives</h3>
+            <ul>
+              <li>Implement a mathematically rigorous AVL tree engine with zero pre-computed or hard-coded shortcuts.</li>
+              <li>Decompose the insertion pipeline into discrete, observable micro-steps: comparison traversal, leaf attachment, ancestor backtracking, balance factor calculation, imbalance detection, rotation execution, and tree updating.</li>
+              <li>Provide visual feedback for all four rotation cases (LL, RR, LR, RL) with explicit step-1 and step-2 separation for double rotations.</li>
+              <li>Implement interactive playback controls (Play, Pause, Step Next, Step Prev, Speed Adjustment, Timeline Scrubber).</li>
+              <li>Provide an interactive side-by-side benchmark comparing standard BST skewing with AVL self-balancing.</li>
+            </ul>
+          </section>
+
+          <!-- Section 4 -->
+          <section class="report-section">
+            <h3>4. System Design & Architecture</h3>
+            <p>
+              The system follows a strict three-tier decoupled architectural pattern:
+            </p>
+            <div class="callout-box">
+              <pre style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--dark); line-height: 1.5;">
+┌────────────────────────────────────────────────────────┐
+│                   User Interface Layer                 │
+│  (Controls, Inputs, Playback, Speed, Formula Card)     │
+└───────────────────────────▲────────────────────────────┘
+                            │ Dispatches Events
+┌───────────────────────────┴────────────────────────────┐
+│              Animation & Orchestration Layer           │
+│    (StepAnimator, Timeline Scrubber, Snapshot Queue)   │
+└───────────────────────────▲────────────────────────────┘
+                            │ Snapshot Stream
+┌───────────────────────────┴────────────────────────────┐
+│                   Core AVL Engine                      │
+│   (AVLNode, Height/BF Calculation, 4 Rotation Cases)   │
+└────────────────────────────────────────────────────────┘
+              </pre>
+            </div>
+            <ul>
+              <li><strong>Core AVL Engine (avl-logic.js):</strong> Implements pure recursive and iterative tree algorithms. Maintains immutable snapshot captures of tree states at each atomic operation.</li>
+              <li><strong>Visualization Engine (tree-renderer.js):</strong> Generates responsive SVG elements with dynamic coordinates, curved Bézier edges, node cards with height and balance factor tags, and rotation directional cues.</li>
+              <li><strong>Playback Controller (animator.js):</strong> Controls asynchronous playback ticks, timeline navigation, bidirectional stepping, and speed regulation.</li>
+            </ul>
+          </section>
+
+          <!-- Section 5 -->
+          <section class="report-section">
+            <h3>5. Verification & Test Case Matrix</h3>
+            <div class="complexity-table-wrapper">
+              <table class="academic-table">
+                <thead>
+                  <tr>
+                    <th>Test Case</th>
+                    <th>Input Sequence</th>
+                    <th>Detected Case</th>
+                    <th>Required Rotation</th>
+                    <th>Root After Rebalancing</th>
+                    <th>Verification Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>LL Case</strong></td>
+                    <td><code>30, 20, 10</code></td>
+                    <td>Left-Left (LL)</td>
+                    <td>Single Right Rotation on 30</td>
+                    <td>Node 20 (BF: 0)</td>
+                    <td><span class="complexity-tag tag-fast">Passed ✅</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>RR Case</strong></td>
+                    <td><code>10, 20, 30</code></td>
+                    <td>Right-Right (RR)</td>
+                    <td>Single Left Rotation on 10</td>
+                    <td>Node 20 (BF: 0)</td>
+                    <td><span class="complexity-tag tag-fast">Passed ✅</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>LR Case</strong></td>
+                    <td><code>30, 10, 20</code></td>
+                    <td>Left-Right (LR)</td>
+                    <td>Double: Left on 10, Right on 30</td>
+                    <td>Node 20 (BF: 0)</td>
+                    <td><span class="complexity-tag tag-fast">Passed ✅</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>RL Case</strong></td>
+                    <td><code>10, 30, 20</code></td>
+                    <td>Right-Left (RL)</td>
+                    <td>Double: Right on 30, Left on 10</td>
+                    <td>Node 20 (BF: 0)</td>
+                    <td><span class="complexity-tag tag-fast">Passed ✅</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Prompt Sequence</strong></td>
+                    <td><code>30, 20, 10, 25, 28</code></td>
+                    <td>LL followed by LR</td>
+                    <td>Right on 30, Double on 20</td>
+                    <td>Node 20 (BF: -1)</td>
+                    <td><span class="complexity-tag tag-fast">Passed ✅</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Section 6: Viva Voce Prep -->
+          <section class="report-section">
+            <h3>6. Viva Voce Examination Questions & Model Answers</h3>
+
+            <div class="viva-card">
+              <div class="viva-q">Q1: What is the formal definition of an AVL tree?</div>
+              <div class="viva-a">
+                An AVL tree is a binary search tree in which the height difference (balance factor) between the left and right subtrees of any node is at most 1. That is, $BF(N) = \text{Height}(Left) - \text{Height}(Right) \in \{-1, 0, +1\}$.
+              </div>
+            </div>
+
+            <div class="viva-card">
+              <div class="viva-q">Q2: Why does an ordinary BST perform poorly on sorted input?</div>
+              <div class="viva-a">
+                Inserting monotonically increasing or decreasing keys into an ordinary BST creates a single branch with no opposite children. The tree degenerates into a linear singly-linked list of height $n$, reducing search, insert, and delete operations from $O(\log n)$ to $O(n)$.
+              </div>
+            </div>
+
+            <div class="viva-card">
+              <div class="viva-q">Q3: How do you identify whether an LR or LL rotation is needed?</div>
+              <div class="viva-a">
+                When an ancestor $z$ has $BF(z) = +2$, it is left-heavy. We examine its left child $y$: if the inserted key is in $y$'s left subtree ($BF(y) \ge 0$), it is an <strong>LL case</strong> requiring a single right rotation. If the inserted key is in $y$'s right subtree ($BF(y) < 0$), it is an <strong>LR case</strong> requiring a double rotation (left rotate on child $y$, then right rotate on root $z$).
+              </div>
+            </div>
+
+            <div class="viva-card">
+              <div class="viva-q">Q4: What is the time complexity of a tree rotation?</div>
+              <div class="viva-a">
+                A tree rotation runs in strictly $O(1)$ constant time because it involves modifying only a fixed constant number of pointer references (typically 3 pointers) and updating the height fields of the two affected nodes.
+              </div>
+            </div>
+
+            <div class="viva-card">
+              <div class="viva-q">Q5: How many rotations are required after an insertion in an AVL tree?</div>
+              <div class="viva-a">
+                At most one rotation (either single or double) is required after an insertion. Rebalancing the lowest imbalanced ancestor restores the subtree height to its pre-insertion value, so all higher ancestors remain balanced. (Note: in deletion, up to $O(\log n)$ rotations may occur).
+              </div>
+            </div>
+          </section>
+
+          <!-- Section 7 -->
+          <section class="report-section">
+            <h3>7. Conclusion & Future Scope</h3>
+            <p>
+              The system successfully fulfills all academic criteria for AI2203 Data Structures and Algorithms Laboratory. It transforms abstract pointer manipulation into an interactive, visual journey. Future extensions include multi-key 2-3-4 tree visualization, red-black tree color transformations, and automated step-by-step student quiz evaluation modules.
+            </p>
+          </section>
+
+          <!-- Section 8 -->
+          <section class="report-section">
+            <h3>8. References</h3>
+            <ol>
+              <li>Adelson-Velsky, G.; Landis, E. (1962). "An algorithm for the organization of information". <em>Proceedings of the USSR Academy of Sciences</em>, 146: 263–266.</li>
+              <li>Cormen, T. H., Leiserson, C. E., Rivest, R. L., & Stein, C. (2009). <em>Introduction to Algorithms (3rd ed.)</em>. MIT Press, Chapter 13.</li>
+              <li>Knuth, D. E. (1998). <em>The Art of Computer Programming, Volume 3: Sorting and Searching</em>. Addison-Wesley.</li>
+            </ol>
+          </section>
+
+        </article>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================================================
+       APPLICATION FOOTER
+       ======================================================================== -->
+  <footer class="app-footer">
+    <div>
+      <strong>AVL Tree Visualization and Balancing System</strong> • AI2203 Data Structures and Algorithms Laboratory
+    </div>
+    <div style="margin-top: 0.25rem;">
+      Engineered for Academic Excellence • College Mini Project
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toastBanner" class="toast-banner">
+    <span id="toastText">Action notification</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/avl-logic.js"></script>
+  <script src="js/tree-renderer.js"></script>
+  <script src="js/animator.js"></script>
+  <script src="js/bst-comparison.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
